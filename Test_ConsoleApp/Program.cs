@@ -1,5 +1,6 @@
 ﻿using Min_Helpers;
 using Min_Helpers.LogHelper;
+using Min_Helpers.PrintHelper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,25 +18,49 @@ namespace Test_ConsoleApp
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en");
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("en");
 
-            ConsoleHelper.Initialize();
+            Log LogService = new Log();
+
+            Print PrintService = new Print(LogService);
 
             try
             {
-                ConsoleHelper.WriteLine("error", ConsoleHelper.EMode.error);
-                ConsoleHelper.WriteLine("info", ConsoleHelper.EMode.info);
-                ConsoleHelper.WriteLine("message", ConsoleHelper.EMode.message);
-                ConsoleHelper.WriteLine("question", ConsoleHelper.EMode.question);
-                ConsoleHelper.WriteLine("success", ConsoleHelper.EMode.success);
-                ConsoleHelper.WriteLine("warning", ConsoleHelper.EMode.warning);
+                PrintService.MessageLine(new List<Print.IWriteMessage>() {
+                    new Print.IWriteMessage(){ message = "title", background = ConsoleColor.Red },
+                    new Print.IWriteMessage(){ message = "body", font = ConsoleColor.Red },
+                    new Print.IWriteMessage(){ message = "foot", background = ConsoleColor.Red, font = ConsoleColor.Blue }
+                });
 
-                Log log = new Log();
-                log.Write($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} [{Thread.CurrentThread.ManagedThreadId}]-> 123");
-                log.Write($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} [{Thread.CurrentThread.ManagedThreadId}]-> 123", "test");
+                PrintService.NewLine();
+
+                PrintService.WriteLine("error", Print.EMode.error);
+                PrintService.WriteLine("info", Print.EMode.info);
+                PrintService.WriteLine("message", Print.EMode.message);
+                PrintService.WriteLine("question", Print.EMode.question);
+                PrintService.WriteLine("success", Print.EMode.success);
+                PrintService.WriteLine("warning", Print.EMode.warning);
+
+                PrintService.NewLine();
+
+                PrintService.WriteLine("Title", "error", Print.EMode.error);
+                PrintService.WriteLine("Title", "info", Print.EMode.info);
+                PrintService.WriteLine("Title", "message", Print.EMode.message);
+                PrintService.WriteLine("Title", "question", Print.EMode.question);
+                PrintService.WriteLine("Title", "success", Print.EMode.success);
+                PrintService.WriteLine("Title", "warning", Print.EMode.warning);
+
+                PrintService.NewLine();
+
+                PrintService.Log("error", Print.EMode.error);
+                PrintService.Log("info", Print.EMode.info);
+                PrintService.Log("message", Print.EMode.message);
+                PrintService.Log("question", Print.EMode.question);
+                PrintService.Log("success", Print.EMode.success);
+                PrintService.Log("warning", Print.EMode.warning);
             }
             catch (Exception ex)
             {
                 ex = ExceptionHelper.GetReal(ex);
-                ConsoleHelper.WriteLine($"{ex.Message}", ConsoleHelper.EMode.error);
+                PrintService.WriteLine($"{ex.Message}", Print.EMode.error);
             }
             finally
             {
