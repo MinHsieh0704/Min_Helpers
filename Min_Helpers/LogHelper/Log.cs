@@ -23,6 +23,12 @@ namespace Min_Helpers.LogHelper
         public string LogFileName { get; set; } = "{{type}}-{{date}}-{{index}}.log";
 
         /// <summary>
+        /// Template of Log File Name Date Format
+        /// </summary>
+        /// <value>default - "yyyy-MM-dd"</value>
+        public string LogFileNameDateFormat { get; set; } = "yyyy-MM-dd";
+
+        /// <summary>
         /// Max Size of Log File
         /// </summary>
         /// <value>default - "10000000"</value>
@@ -55,7 +61,7 @@ namespace Min_Helpers.LogHelper
             {
                 DateTime now = DateTime.Now;
 
-                string filename = $"{this.LogPath}\\{this.LogFileName.Replace("{{type}}", type).Replace("{{date}}", now.ToString("yyyy-MM-dd"))}";
+                string filename = $"{this.LogPath}\\{this.LogFileName.Replace("{{type}}", type).Replace("{{date}}", now.ToString(this.LogFileNameDateFormat))}";
 
                 for (int i = 1; true; i++) {
                     string _filename = filename.Replace("{{index}}", i.ToString());
