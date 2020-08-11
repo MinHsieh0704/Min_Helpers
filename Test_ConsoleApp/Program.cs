@@ -1,4 +1,5 @@
 ﻿using Min_Helpers;
+using Min_Helpers.LogHelper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,6 +27,10 @@ namespace Test_ConsoleApp
                 ConsoleHelper.WriteLine("question", ConsoleHelper.EMode.question);
                 ConsoleHelper.WriteLine("success", ConsoleHelper.EMode.success);
                 ConsoleHelper.WriteLine("warning", ConsoleHelper.EMode.warning);
+
+                Log log = new Log();
+                log.Write($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} [{Thread.CurrentThread.ManagedThreadId}]-> 123");
+                log.Write($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} [{Thread.CurrentThread.ManagedThreadId}]-> 123", "test");
             }
             catch (Exception ex)
             {
