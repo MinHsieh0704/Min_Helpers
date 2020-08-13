@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -263,11 +264,22 @@ namespace Min_Helpers.PrintHelper
         public void Log(object message, EMode mode)
         {
             StackTrace trace = new StackTrace(true);
-            StackFrame frame = trace.GetFrame(trace.FrameCount - 1);
+            StackFrame frame = trace.GetFrames().Where((n) => n.GetFileName() != null).FirstOrDefault();
 
-            string path = $"{frame.GetMethod().DeclaringType.FullName}:line {frame.GetFileLineNumber()}";
+            string path = "";
+            if (frame != null)
+            {
+                Type declaringType = frame.GetMethod().DeclaringType;
+                while (true)
+                {
+                    if (declaringType.DeclaringType == null) break;
+                    declaringType = declaringType.DeclaringType;
+                }
 
-            this.Log(message, mode, path);
+                path = $"{declaringType.FullName}:line {frame.GetFileLineNumber()}";
+            }
+
+            this.Log(message, path, mode, null);
         }
 
         /// <summary>
@@ -275,8 +287,36 @@ namespace Min_Helpers.PrintHelper
         /// </summary>
         /// <param name="message"></param>
         /// <param name="mode"></param>
+        /// <param name="type"></param>
+        public void Log(object message, EMode mode, string type)
+        {
+            StackTrace trace = new StackTrace(true);
+            StackFrame frame = trace.GetFrame(trace.FrameCount - 1);
+
+            string path = $"{frame.GetMethod().DeclaringType.FullName}:line {frame.GetFileLineNumber()}";
+
+            this.Log(message, path, mode, type);
+        }
+
+        /// <summary>
+        /// Console DateTime and Mode and Write Line
+        /// </summary>
+        /// <param name="message"></param>
         /// <param name="path"></param>
-        public void Log(object message, EMode mode, string path)
+        /// <param name="mode"></param>
+        public void Log(object message, string path, EMode mode)
+        {
+            this.Log(message, path, mode, null);
+        }
+
+        /// <summary>
+        /// Console DateTime and Mode and Write Line
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="path"></param>
+        /// <param name="mode"></param>
+        /// <param name="type"></param>
+        public void Log(object message, string path, EMode mode, string type)
         {
             ConsoleColor color = (ConsoleColor)mode;
 
@@ -315,7 +355,14 @@ namespace Min_Helpers.PrintHelper
                 new IWriteMessage() { message = $"({path})\n" }
             });
 
-            this.log.Write($"{date} {title} ---> [{Thread.CurrentThread.ManagedThreadId}] {message} ({path})");
+            if (type == null)
+            {
+                this.log.Write($"{date} {title} ---> [{Thread.CurrentThread.ManagedThreadId}] {message} ({path})");
+            }
+            else
+            {
+                this.log.Write($"{date} {title} ---> [{Thread.CurrentThread.ManagedThreadId}] {message} ({path})", type);
+            }
         }
     }
 }

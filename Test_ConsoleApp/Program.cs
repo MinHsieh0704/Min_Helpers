@@ -56,6 +56,11 @@ namespace Test_ConsoleApp
                 PrintService.Log("question", Print.EMode.question);
                 PrintService.Log("success", Print.EMode.success);
                 PrintService.Log("warning", Print.EMode.warning);
+
+                PrintService.Log("warning", Print.EMode.warning);
+                PrintService.Log("warning", Print.EMode.warning, "test");
+                PrintService.Log("warning", "test", Print.EMode.warning);
+                PrintService.Log("warning", "test", Print.EMode.warning, "test");
             }
             catch (Exception ex)
             {
