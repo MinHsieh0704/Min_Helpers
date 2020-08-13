@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -263,9 +264,20 @@ namespace Min_Helpers.PrintHelper
         public void Log(object message, EMode mode)
         {
             StackTrace trace = new StackTrace(true);
-            StackFrame frame = trace.GetFrame(trace.FrameCount - 1);
+            StackFrame frame = trace.GetFrames().Where((n) => n.GetFileName() != null).FirstOrDefault();
 
-            string path = $"{frame.GetMethod().DeclaringType.FullName}:line {frame.GetFileLineNumber()}";
+            string path = "";
+            if (frame != null)
+            {
+                Type declaringType = frame.GetMethod().DeclaringType;
+                while (true)
+                {
+                    if (declaringType.DeclaringType == null) break;
+                    declaringType = declaringType.DeclaringType;
+                }
+
+                path = $"{declaringType.FullName}:line {frame.GetFileLineNumber()}";
+            }
 
             this.Log(message, path, mode, null);
         }
