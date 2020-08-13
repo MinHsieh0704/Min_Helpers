@@ -5,10 +5,10 @@
     <Authors>Min.Hsieh</Authors>
     <Company>Min.Hsieh</Company>
     <Product>Min Helpers</Product>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Description>Min Helpers</Description>
-    <AssemblyVersion>1.1.1</AssemblyVersion>
-    <FileVersion>1.1.1</FileVersion>
+    <AssemblyVersion>1.1.2</AssemblyVersion>
+    <FileVersion>1.1.2</FileVersion>
     <Copyright>Copyright © 2020</Copyright>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
