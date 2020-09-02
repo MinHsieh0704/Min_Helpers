@@ -2,11 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Threading;
 
 namespace Min_Helpers.PrintHelper
@@ -75,24 +71,16 @@ namespace Min_Helpers.PrintHelper
             public ConsoleColor? background { get; set; }
         }
 
-        private Subject<List<IWriteMessage>> WriteQueue = new Subject<List<IWriteMessage>>();
-
         private Log log { get; set; }
+
+        private static object @lock { get; set; } = new object();
 
         /// <summary>
         /// ConsoleHelper
         /// </summary>
         public Print()
         {
-            try
-            {
-                this.log = new Log();
-                this.Initialize();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            this.log = new Log();
         }
 
         /// <summary>
@@ -101,48 +89,29 @@ namespace Min_Helpers.PrintHelper
         /// <param name="log"></param>
         public Print(Log log)
         {
-            try
-            {
-                this.log = log;
-                this.Initialize();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            this.log = log;
         }
 
         /// <summary>
-        /// Initialize
+        /// Console Write
         /// </summary>
-        public void Initialize()
+        /// <param name="messages"></param>
+        private void Base(List<IWriteMessage> messages)
         {
-            if (this.WriteQueue != null)
+            lock (Print.@lock)
             {
-                this.WriteQueue.OnCompleted();
+                for (int i = 0; i < messages.Count; i++)
+                {
+                    var message = messages[i];
+
+                    if (message.font != null) Console.ForegroundColor = (ConsoleColor)message.font;
+                    if (message.background != null) Console.BackgroundColor = (ConsoleColor)message.background;
+                    Console.Write(message.message);
+                    Console.ResetColor();
+
+                    if (i != messages.Count - 1) Console.Write(" ");
+                }
             }
-
-            this.WriteQueue = new Subject<List<IWriteMessage>>();
-
-            this.WriteQueue
-                .ObserveOn(NewThreadScheduler.Default)
-                .Subscribe((x) => {
-                    try
-                    {
-                        for (int i = 0; i < x.Count; i++)
-                        {
-                            if (x[i].font != null) Console.ForegroundColor = (ConsoleColor)x[i].font;
-                            if (x[i].background != null) Console.BackgroundColor = (ConsoleColor)x[i].background;
-                            Console.Write(x[i].message);
-                            Console.ResetColor();
-                            if (i != x.Count - 1)  Console.Write(" ");
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
-                });
         }
 
         /// <summary>
@@ -151,7 +120,7 @@ namespace Min_Helpers.PrintHelper
         /// <param name="messages"></param>
         public void Message(List<IWriteMessage> messages)
         {
-            this.WriteQueue.OnNext(messages);
+            this.Base(messages);
         }
 
         /// <summary>
@@ -161,7 +130,7 @@ namespace Min_Helpers.PrintHelper
         public void MessageLine(List<IWriteMessage> messages)
         {
             messages.Add(new IWriteMessage() { message = "\n" });
-            this.WriteQueue.OnNext(messages);
+            this.Base(messages);
         }
 
         /// <summary>
@@ -171,7 +140,7 @@ namespace Min_Helpers.PrintHelper
         /// <param name="color"></param>
         public void Write(object message, ConsoleColor color)
         {
-            this.WriteQueue.OnNext(new List<IWriteMessage>()
+            this.Base(new List<IWriteMessage>()
             {
                 new IWriteMessage() { message = message, font = color }
             });
@@ -184,7 +153,7 @@ namespace Min_Helpers.PrintHelper
         /// <param name="mode"></param>
         public void Write(object message, EMode mode)
         {
-            this.WriteQueue.OnNext(new List<IWriteMessage>()
+            this.Base(new List<IWriteMessage>()
             {
                 new IWriteMessage() { message = message, font = (ConsoleColor)mode }
             });
@@ -197,7 +166,7 @@ namespace Min_Helpers.PrintHelper
         /// <param name="color"></param>
         public void WriteLine(object message, ConsoleColor color)
         {
-            this.WriteQueue.OnNext(new List<IWriteMessage>()
+            this.Base(new List<IWriteMessage>()
             {
                 new IWriteMessage() { message = $"{message}\n", font = color }
             });
@@ -211,7 +180,7 @@ namespace Min_Helpers.PrintHelper
         /// <param name="color"></param>
         public void WriteLine(string title, object message, ConsoleColor color)
         {
-            this.WriteQueue.OnNext(new List<IWriteMessage>()
+            this.Base(new List<IWriteMessage>()
             {
                 new IWriteMessage() { message = $"{title}", font = color },
                 new IWriteMessage() { message = $"--->", font = color },
@@ -226,7 +195,7 @@ namespace Min_Helpers.PrintHelper
         /// <param name="mode"></param>
         public void WriteLine(object message, EMode mode)
         {
-            this.WriteQueue.OnNext(new List<IWriteMessage>()
+            this.Base(new List<IWriteMessage>()
             {
                 new IWriteMessage() { message = $"{message}\n", font = (ConsoleColor)mode }
             });
@@ -240,7 +209,7 @@ namespace Min_Helpers.PrintHelper
         /// <param name="mode"></param>
         public void WriteLine(string title, object message, EMode mode)
         {
-            this.WriteQueue.OnNext(new List<IWriteMessage>()
+            this.Base(new List<IWriteMessage>()
             {
                 new IWriteMessage() { message = $"{title}", font = (ConsoleColor)mode },
                 new IWriteMessage() { message = $"--->", font = (ConsoleColor)mode },
@@ -253,7 +222,10 @@ namespace Min_Helpers.PrintHelper
         /// </summary>
         public void NewLine()
         {
-            this.WriteLine("", ConsoleColor.White);
+            this.Base(new List<IWriteMessage>()
+            {
+                new IWriteMessage() { message = "" }
+            });
         }
 
         /// <summary>
@@ -345,7 +317,7 @@ namespace Min_Helpers.PrintHelper
                     break;
             }
 
-            this.WriteQueue.OnNext(new List<IWriteMessage>()
+            this.Base(new List<IWriteMessage>()
             {
                 new IWriteMessage() { message = $"{date}", font = color },
                 new IWriteMessage() { message = $"{title}", font = color },
