@@ -36,9 +36,6 @@
     <StartupObject>Test_ConsoleApp.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Min_Helpers">
-      <HintPath>..\Min_Helpers\bin\Min_Helpers.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -62,6 +59,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Min_Helpers\Min_Helpers.csproj">
+      <Project>{93c5b34e-7f43-4d04-986e-ece403d7f60c}</Project>
+      <Name>Min_Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

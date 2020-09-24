@@ -14,17 +14,17 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>.\bin\</OutputPath>
+    <OutputPath>.\bin\Debug\Min_Helpers</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <DocumentationFile>.\bin\Min_Helpers.xml</DocumentationFile>
+    <DocumentationFile>.\bin\Debug\Min_Helpers\Min_Helpers.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>.\bin\</OutputPath>
+    <OutputPath>.\bin\Release\Min_Helpers</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <DocumentationFile>.\bin\Min_Helpers.xml</DocumentationFile>
+    <DocumentationFile>.\bin\Release\Min_Helpers\Min_Helpers.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
