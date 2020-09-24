@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Test_ConsoleApp.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Min_Helpers">
       <HintPath>..\Min_Helpers\bin\Min_Helpers.dll</HintPath>
@@ -54,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test_Print.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

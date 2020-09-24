@@ -1,5 +1,6 @@
 ﻿using Jose;
 using System;
+using System.Net;
 using System.Text;
 
 namespace Min_Helpers.JwtHelper
@@ -86,7 +87,7 @@ namespace Min_Helpers.JwtHelper
             {
                 if (string.IsNullOrEmpty(token))
                 {
-                    Exception ex = new Exception(Convert.ToInt32(StatusHelper.EHttpStatus.BadRequest).ToString());
+                    Exception ex = new Exception(Convert.ToInt32(HttpStatusCode.BadRequest).ToString());
                     throw ex;
                 }
 
@@ -94,7 +95,7 @@ namespace Min_Helpers.JwtHelper
 
                 if (DateTime.Now.Ticks > payload.exp)
                 {
-                    Exception ex = new Exception(Convert.ToInt32(StatusHelper.EHttpStatus.Timeout).ToString());
+                    Exception ex = new Exception(Convert.ToInt32(HttpStatusCode.RequestTimeout).ToString());
                     throw ex;
                 }
 
@@ -102,7 +103,7 @@ namespace Min_Helpers.JwtHelper
             }
             catch (IntegrityException)
             {
-                Exception ex = new Exception(Convert.ToInt32(StatusHelper.EHttpStatus.Unauthorized).ToString());
+                Exception ex = new Exception(Convert.ToInt32(HttpStatusCode.Unauthorized).ToString());
                 throw ex;
             }
             catch (Exception)
