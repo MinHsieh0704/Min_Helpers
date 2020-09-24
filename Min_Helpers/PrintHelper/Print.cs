@@ -224,7 +224,7 @@ namespace Min_Helpers.PrintHelper
         {
             this.Base(new List<IWriteMessage>()
             {
-                new IWriteMessage() { message = "" }
+                new IWriteMessage() { message = "\n" }
             });
         }
 
