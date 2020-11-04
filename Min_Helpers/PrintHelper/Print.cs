@@ -236,7 +236,13 @@ namespace Min_Helpers.PrintHelper
         public void Log(object message, EMode mode)
         {
             StackTrace trace = new StackTrace(true);
-            StackFrame frame = trace.GetFrames().Where((n) => n.GetFileName() != null).FirstOrDefault();
+
+            StackFrame frame = null;
+#if NETFRAMEWORK
+            frame = trace.GetFrames().Where((n) => n.GetFileName() != null).FirstOrDefault();
+#else
+            frame = trace.GetFrames().Where((n) => n.GetFileName() != null).Skip(1).FirstOrDefault();
+#endif
 
             string path = "";
             if (frame != null)
@@ -263,9 +269,26 @@ namespace Min_Helpers.PrintHelper
         public void Log(object message, EMode mode, string type)
         {
             StackTrace trace = new StackTrace(true);
-            StackFrame frame = trace.GetFrame(trace.FrameCount - 1);
 
-            string path = $"{frame.GetMethod().DeclaringType.FullName}:line {frame.GetFileLineNumber()}";
+            StackFrame frame = null;
+#if NETFRAMEWORK
+            frame = trace.GetFrames().Where((n) => n.GetFileName() != null).FirstOrDefault();
+#else
+            frame = trace.GetFrames().Where((n) => n.GetFileName() != null).Skip(1).FirstOrDefault();
+#endif
+
+            string path = "";
+            if (frame != null)
+            {
+                Type declaringType = frame.GetMethod().DeclaringType;
+                while (true)
+                {
+                    if (declaringType.DeclaringType == null) break;
+                    declaringType = declaringType.DeclaringType;
+                }
+
+                path = $"{declaringType.FullName}:line {frame.GetFileLineNumber()}";
+            }
 
             this.Log(message, path, mode, type);
         }
