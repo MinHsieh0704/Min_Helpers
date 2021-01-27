@@ -237,12 +237,8 @@ namespace Min_Helpers.PrintHelper
         {
             StackTrace trace = new StackTrace(true);
 
-            StackFrame frame = null;
-#if NETFRAMEWORK
-            frame = trace.GetFrames().Where((n) => n.GetFileName() != null).FirstOrDefault();
-#else
-            frame = trace.GetFrames().Where((n) => n.GetFileName() != null).Skip(1).FirstOrDefault();
-#endif
+            List<StackFrame> frames = trace.GetFrames().Where((n) => n.GetFileName() != null).ToList();
+            StackFrame frame = frames.Count() > 1 ? frames.Skip(1).FirstOrDefault() : frames.FirstOrDefault();
 
             string path = "";
             if (frame != null)
@@ -270,12 +266,8 @@ namespace Min_Helpers.PrintHelper
         {
             StackTrace trace = new StackTrace(true);
 
-            StackFrame frame = null;
-#if NETFRAMEWORK
-            frame = trace.GetFrames().Where((n) => n.GetFileName() != null).FirstOrDefault();
-#else
-            frame = trace.GetFrames().Where((n) => n.GetFileName() != null).Skip(1).FirstOrDefault();
-#endif
+            List<StackFrame> frames = trace.GetFrames().Where((n) => n.GetFileName() != null).ToList();
+            StackFrame frame = frames.Count() > 1 ? frames.Skip(1).FirstOrDefault() : frames.FirstOrDefault();
 
             string path = "";
             if (frame != null)
